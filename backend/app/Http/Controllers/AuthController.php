@@ -64,13 +64,13 @@ class AuthController extends Controller
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:8',
         ]);
 
         $user = new User;
        
-        $user->name = $request->name;
-       
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         
@@ -108,17 +108,33 @@ class AuthController extends Controller
 
 
     public function store(Request $request)
-{
+{   
+     $request->validate([
+    'name' => 'required|string',
+    'phone_number' => 'required|string',
+    'address' => 'required|string',
+    'latitude' => 'required|string',
+    'longitude' => 'required|string',
+    'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,ico|max:2048',
+]);
+
     $name = $request->input('name');
     $phone_number = $request->input('phone_number');
     $address = $request->input('address');
     $latitude = $request->input('latitude');
     $longitude = $request->input('longitude');
-
+    $image = $request->input('image');
     if (empty($name) || empty($phone_number) || empty($address) || empty($latitude) || empty($longitude)) {
         return json_encode(["message" => "All fields are required."]);
     }
-
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('public/images');
+        $image_path  = "/storage/".str_replace('public/', '', $imagePath);
+    }else {
+        
+        $image_path = '../../storage/images/profilepic.png';
+        
+    }
     $contact = new Contact();
 
     $contact->name = $name;
@@ -126,7 +142,8 @@ class AuthController extends Controller
     $contact->address = $address;
     $contact->latitude = $latitude;
     $contact->longitude = $longitude;
-
+   
+    $contact->image=$image_path;
     $contact->save();
 
     return json_encode(["contact" => $contact]);
