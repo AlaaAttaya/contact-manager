@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-
+use App\Models\Contacts;
 class AuthController extends Controller
 {
 
@@ -113,40 +113,53 @@ class AuthController extends Controller
     'name' => 'required|string',
     'phone_number' => 'required|string',
     'address' => 'required|string',
-    'latitude' => 'required|string',
-    'longitude' => 'required|string',
+    'latitude' => 'required|numeric',
+    'longitude' => 'required|numeric',
     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,ico|max:2048',
 ]);
-
+    $user = Auth::user();
+    $user_id = $user->id;
     $name = $request->input('name');
     $phone_number = $request->input('phone_number');
     $address = $request->input('address');
     $latitude = $request->input('latitude');
     $longitude = $request->input('longitude');
     $image = $request->input('image');
-    if (empty($name) || empty($phone_number) || empty($address) || empty($latitude) || empty($longitude)) {
-        return json_encode(["message" => "All fields are required."]);
-    }
+    // if (empty($name) || empty($phone_number) || empty($address) || empty($latitude) || empty($longitude)) {
+    //     return json_encode(["message" => "All fields are required."]);
+    // }
     if ($request->hasFile('image')) {
         $imagePath = $request->file('image')->store('public/images');
-        $image_path  = "/storage/".str_replace('public/', '', $imagePath);
+        $image_path  = "/storage".str_replace('public', '', $imagePath);
     }else {
         
-        $image_path = '../../storage/images/profilepic.png';
+        $image_path = '/storage/images/profilepic.png';
         
     }
-    $contact = new Contact();
+    $contact = new Contacts();
 
     $contact->name = $name;
     $contact->phone_number = $phone_number;
     $contact->address = $address;
     $contact->latitude = $latitude;
     $contact->longitude = $longitude;
+    $contact->user_id = $user_id;
    
     $contact->image=$image_path;
     $contact->save();
 
     return json_encode(["contact" => $contact]);
+}
+
+public function getContacts(Request $request)
+{
+   
+    $user = Auth::user();
+
+    
+    $contacts = $user->contacts;
+
+    return response()->json(['contacts' => $contacts]);
 }
 
 }

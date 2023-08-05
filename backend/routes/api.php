@@ -10,6 +10,7 @@ Route::group(["middleware" => "auth:api"], function () {
         Route::post("logout", [AuthController::class, "logout"]);
         Route::post("refresh", [AuthController::class, "refresh"]);
         Route::post('contacts/store', [AuthController::class, 'store']);
+        Route::get('contacts', [AuthController::class, 'getContacts']);
     });
 });
 

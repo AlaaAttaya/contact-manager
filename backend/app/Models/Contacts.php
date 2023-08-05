@@ -11,4 +11,8 @@ class Contacts extends Model
     protected $fillable = [
         'name', 'phone_number', 'address', 'latitude', 'longitude','image'
     ];
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
