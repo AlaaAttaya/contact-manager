@@ -15,9 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone_number');
-            $table->string('address');
-            $table->decimal('latitude', 11, 10);
-            $table->decimal('longitude', 11, 10);
+            $table->json('address');
             $table->string('image');
             $table->timestamps();
           
