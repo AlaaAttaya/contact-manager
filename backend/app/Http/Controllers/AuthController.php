@@ -117,17 +117,17 @@ class AuthController extends Controller
     'longitude' => 'required|numeric',
     'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,ico|max:2048',
 ]);
+
     $user = Auth::user();
     $user_id = $user->id;
+
     $name = $request->input('name');
     $phone_number = $request->input('phone_number');
     $address = $request->input('address');
     $latitude = $request->input('latitude');
     $longitude = $request->input('longitude');
-    $image = $request->input('image');
-    // if (empty($name) || empty($phone_number) || empty($address) || empty($latitude) || empty($longitude)) {
-    //     return json_encode(["message" => "All fields are required."]);
-    // }
+    
+
     if ($request->hasFile('image')) {
         $imagePath = $request->file('image')->store('public/images');
         $image_path  = "/storage".str_replace('public', '', $imagePath);
@@ -148,8 +148,55 @@ class AuthController extends Controller
     $contact->image=$image_path;
     $contact->save();
 
-    return json_encode(["contact" => $contact]);
+    return json(["contact" => $contact]);
 }
+
+
+public function updateContact(Request $request, $contactId)
+{
+    $request->validate([
+        'name' => 'required|string',
+        'phone_number' => 'required|string',
+        'address' => 'required|string',
+        'latitude' => 'required|numeric',
+        'longitude' => 'required|numeric',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,ico|max:2048',
+    ]);
+
+    $user = Auth::user();
+    $user_id = $user->id;
+    $name = $request->input('name');
+    $phone_number = $request->input('phone_number');
+    $address = $request->input('address');
+    $latitude = $request->input('latitude');
+    $longitude = $request->input('longitude');
+    
+
+    $contact = Contacts::find($contactId);
+
+    if (!$contact) {
+        return response()->json(['message' => 'No Contact Found'], 404);
+    }
+
+    $contact->name = $name;
+    $contact->phone_number = $phone_number;
+    $contact->address = $address;
+    $contact->latitude = $latitude;
+    $contact->longitude = $longitude;
+   
+    if ($request !== null && $request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('public/images');
+            $image_path  = "/storage".str_replace('public', '', $imagePath);
+            $contact->image = $image_path;
+    }
+    
+
+    $contact->save();
+
+    return response()->json(['message' => 'Contact Updated Successfully']);
+}
+
+
 
 public function getContacts(Request $request)
 {
@@ -161,5 +208,23 @@ public function getContacts(Request $request)
 
     return response()->json(['contacts' => $contacts]);
 }
+
+public function deleteContact(Request $request, $contactId)
+{
+    $user = Auth::user();
+
+    
+    $contact = $user->contacts->find($contactId);
+
+    if (!$contact) {
+        return response()->json(['message' => 'No Contact Found'], 404);
+    }
+
+   
+    $contact->delete();
+
+    return response()->json(['message' => 'Contact Deleted']);
+}
+
 
 }

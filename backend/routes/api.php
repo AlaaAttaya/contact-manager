@@ -11,6 +11,8 @@ Route::group(["middleware" => "auth:api"], function () {
         Route::post("refresh", [AuthController::class, "refresh"]);
         Route::post('contacts/store', [AuthController::class, 'store']);
         Route::get('contacts', [AuthController::class, 'getContacts']);
+        Route::get('contacts/delete/{id}', [AuthController::class, 'deleteContact']);
+        Route::post('contacts/update/{id}', [AuthController::class, 'updateContact']);
     });
 });
 
