@@ -33,7 +33,7 @@ class ContactsController extends Controller
             $image_path = '/storage/images/profilepic.png';
             
         }
-        $contact = new Contact();
+        $contact = new Contacts();
     
         $contact->name = $name;
         $contact->phone_number = $phone_number;
@@ -45,14 +45,14 @@ class ContactsController extends Controller
         $contact->image=$image_path;
         $contact->save();
     
-        return json(["contact" => $contact]);
+        return json_encode(["contact" => $contact]);
     }
 
 
     public function getContacts(Request $request)
 {
    
-    $contacts = Contact::all();
+    $contacts = Contacts::all();
 
 
     return response()->json(['contacts' => $contacts]);

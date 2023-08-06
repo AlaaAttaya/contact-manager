@@ -6,7 +6,7 @@ use App\Http\Controllers\ContactsController;
 
 
    
-Route::post('contacts/store', [AuthController::class, 'store']);
-Route::get('contacts', [AuthController::class, 'getContacts']);
+Route::post('contacts/store', [ContactsController::class, 'store']);
+Route::get('contacts', [ContactsController::class, 'getContacts']);
 
 
