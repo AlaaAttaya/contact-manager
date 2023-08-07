@@ -20,7 +20,8 @@ function Card(props) {
 function CardAdd(props) {
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [location, setLocation] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
   const [image, setImage] = useState(null);
 
   const imageInputRef = useRef();
@@ -41,13 +42,17 @@ function CardAdd(props) {
     const newContact = {
       name: name,
       phone_number: phoneNumber,
-      address: location,
+      address: {
+        latitude: latitude,
+        longitude: longitude,
+      },
       image: image,
     };
 
     setName("");
     setPhoneNumber("");
-    setLocation("");
+    setLatitude("");
+    setLongitude("");
     setImage(null);
   };
 
@@ -83,7 +88,20 @@ function CardAdd(props) {
             onChange={(e) => setPhoneNumber(e.target.value)}
             style={{ height: 20 }}
           />
-          <Details detailInfo={"Location: " + (location || "Location")} />
+          <input
+            type="text"
+            placeholder="Latitude"
+            value={latitude}
+            onChange={(e) => setLatitude(e.target.value)}
+            style={{ height: 20 }}
+          />
+          <input
+            type="text"
+            placeholder="Longitude"
+            value={longitude}
+            onChange={(e) => setLongitude(e.target.value)}
+            style={{ height: 20 }}
+          />
           <button
             onClick={handleAddContact}
             className="add-btn"
