@@ -26,7 +26,7 @@ const Contacts = () => {
 
   return (
     <div>
-      <div class="contactlist-add">
+      <div className="contactlist-add">
         <h1>Contact List</h1>
         <div className="add-btn-div">
           <button className="add-btn" onClick={toggleAddDivision}>
@@ -38,13 +38,7 @@ const Contacts = () => {
       <div className="cards-container">
         {showAddDivision && (
           <div className="add-division">
-            <CardAdd
-              key={"test11"}
-              name={"test1na"}
-              image={"testim"}
-              tel={"test1111"}
-              address={`sad`}
-            />
+            <CardAdd />
           </div>
         )}
         {contactList.map((contact) => {

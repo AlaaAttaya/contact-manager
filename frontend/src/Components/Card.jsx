@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import Avatar from "./Avatar";
 import Details from "./Details";
+import axios from "axios";
 
 function Card(props) {
   return (
@@ -23,7 +24,7 @@ function CardAdd(props) {
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
   const [image, setImage] = useState(null);
-
+  const [imageFile, setImageFile] = useState(null);
   const imageInputRef = useRef();
 
   const handleImageClick = () => {
@@ -35,25 +36,41 @@ function CardAdd(props) {
 
     if (selectedImage) {
       setImage(URL.createObjectURL(selectedImage));
+      setImageFile(selectedImage);
     }
   };
 
   const handleAddContact = () => {
-    const newContact = {
-      name: name,
-      phone_number: phoneNumber,
-      address: {
-        latitude: latitude,
-        longitude: longitude,
-      },
-      image: image,
-    };
-
-    setName("");
-    setPhoneNumber("");
-    setLatitude("");
-    setLongitude("");
-    setImage(null);
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("phone_number", phoneNumber);
+    formData.append("address", JSON.stringify({ latitude, longitude }));
+    if (imageFile == null) {
+    } else {
+      formData.append("image", imageFile);
+    }
+    console.log(imageFile);
+    axios
+      .post("http://127.0.0.1:8000/api/contacts/store", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        console.log("Contact added successfully:", response.data);
+        setName("");
+        setPhoneNumber("");
+        setLatitude("");
+        setLongitude("");
+        setImage(null);
+        setImageFile(null);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Error adding contact:", error);
+        console.log("Validation Errors:", error.response.data.errors);
+        console.log("Error details:", error.message, error.config);
+      });
   };
 
   return (
